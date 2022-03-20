@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schelling Model</title>
+    <link rel="stylesheet" href="../dist/output.css">
+    <link rel="stylesheet" href="custom.css">
+</head>
+<body>
+    <header style="text-align: center;">
+        <h1>Covid Infection Rate Simulator</h1>
+        <h3>By STEM 12 - T2</h3>
+        <h3>Res 03 - Group 3</h3>
+    </header>
+    <main>
+
+        </div>
+        <canvas id="sim">
+            Your browser does not support &lt;canvas&gt; element
+        </canvas>
+    </main>
+    <section id="input">
+
+        <div>
+            <label for="popInit">Initial Population: </label>
+            <input class="border-b-black border-b-2 m-2" type="number" name="popInit" id="popInit">
+        </div>
+
+        <div>
+            <label for="infectInit">Inital Infection: </label>
+            <input class="border-b-black border-b-2 m-2" type="number" name="infectInit" id="infectInit">
+        </div>
+
+        <div>
+            <label for="socDist">Social Distancing: </label>
+            <input class="border-b-black border-b-2 m-2" type="text" name="socDist" id="socDist">
+        </div>
+
+        <div>
+            <label for="area">Area (in km<sup>2</sup>): </label>
+            <input class="border-b-black border-b-2 m-2" type="number" name="area" id="area">
+        </div>
+
+        <button id="simStartBtn">Start Simulation</button>
+
+        <br>
+
+        <button id="testBtn">Test</button>
+    </section>
+    <script type="module" src="./main.js" defer></script>
+    <!-- <script src="./infection.js" defer></script> -->
+</body>
+</html>
