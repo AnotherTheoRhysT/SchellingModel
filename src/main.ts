@@ -1,8 +1,8 @@
 import { simRun, simTest, simReset } from "./simRun.js";
-import { canvasResize, ctx } from "./config.js";
+import { canvasResize, ctx, ctxStatus } from "./config.js";
 import { simInit } from "./simInit.js";
 
-if (!ctx) {
+if (!ctxStatus) {
   // Canvas not supported
   console.log('Canvas not supported')
 } else {

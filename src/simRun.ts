@@ -22,8 +22,8 @@ export function simRun () {
 // var test[50][50]
 
 export function simTest() {
-  test[1][1] = 'test'
-  console.log(test)
+  // test[1][1] = 'test'
+  // console.log(test)
 
   // for (let index = 0; index < 100; index++) {
   //   console.log(Math.round(Math.random() * 850))

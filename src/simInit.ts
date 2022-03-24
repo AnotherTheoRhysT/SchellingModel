@@ -1,9 +1,9 @@
 import { canvas, ctx, canvasHeight, canvasWidth } from "./config.js";
 
-var popInit = document.getElementById("popInit"),
-infectInit = document.getElementById("infectInit"),
-socDist = document.getElementById("socDist"),
-area = document.getElementById("area")
+var popInit = <HTMLInputElement> document.getElementById("popInit"),
+infectInit = <HTMLInputElement> document.getElementById("infectInit"),
+socDist = <HTMLInputElement> document.getElementById("socDist"),
+area = <HTMLInputElement> document.getElementById("area")
 
 var popInitVal
 // infectInitVal = infectInit.value;
@@ -25,11 +25,12 @@ export function simInit() {
 
   // 65% infection rate
 
+  // Initialization 
+
   // Spread population
   for (let popIndex = 0; popIndex < popInitVal; popIndex++) {
     popX = Math.round(Math.random() * canvasWidth)
     popY = Math.round(Math.random() * canvasHeight)
-    
   }
 
 
