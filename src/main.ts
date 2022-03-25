@@ -1,5 +1,5 @@
 import { simRun, simTest, simReset } from "./simRun.js";
-import { canvasResize, ctx, ctxStatus } from "./config.js";
+import { canvas, canvasResize, ctx, ctxStatus } from "./config.js";
 import { simInit } from "./simInit.js";
 
 if (!ctxStatus) {
@@ -14,9 +14,9 @@ if (!ctxStatus) {
 }
 
 document.getElementById('simStartBtn').onclick = () => {
-  simReset()
+  // simReset()
   simInit()
-  simRun()
+  // simRun()
 }
 
 document.getElementById('testBtn').onclick = () => {

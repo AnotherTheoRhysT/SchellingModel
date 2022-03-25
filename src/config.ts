@@ -1,6 +1,10 @@
 var canvas = <HTMLCanvasElement> document.getElementById('sim')
 var canvasHeight = 850
 var canvasWidth = 850
+var personColor = {
+  healthy: '#27d618',
+  infected: '#de1b1b'
+}
 
 var ctx = null
 var ctxStatus = false
@@ -15,7 +19,8 @@ export {
   ctx,
   ctxStatus,
   canvasHeight,
-  canvasWidth
+  canvasWidth,
+  personColor
 }
 
 export function canvasResize () {
