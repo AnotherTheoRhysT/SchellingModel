@@ -1,0 +1,16 @@
+header h3 {
+  margin: 0;
+}
+header h1 {
+  margin-bottom: 0.75rem;
+}
+
+#sim {
+  border: 1px solid black;
+  display: inherit;
+  margin: auto;
+  /* width: 50rem;
+  height: 50rem; */
+  /* width: 850px;
+  height: 850px; */
+}
