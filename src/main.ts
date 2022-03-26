@@ -14,7 +14,7 @@ if (!ctxStatus) {
 }
 
 document.getElementById('simStartBtn').onclick = () => {
-  // simReset()
+  simReset()
   simInit()
   // simRun()
 }

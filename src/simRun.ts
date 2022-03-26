@@ -4,7 +4,7 @@ import { popInitVal, infectInitVal, socDistVal, areaVal } from "./simInit.js";
 var i = 0
 
 export function simReset () {
-  i = 0;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 export function simRun () {
