@@ -24,7 +24,7 @@ var person = {
   status: 'healthy'
 }
 
-export function simInit() {
+export function simInit () {
   popInitVal = popInit.value
   // infectInitVal = infectInit.value;
 
@@ -91,5 +91,6 @@ export {
   popInitVal,
   infectInitVal,
   socDistVal,
-  areaVal
+  areaVal,
+  simGrid
 }

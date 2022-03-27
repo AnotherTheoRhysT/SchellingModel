@@ -5,6 +5,7 @@ var personColor = {
   healthy: '#27d618',
   infected: '#de1b1b'
 }
+var fps = 1
 
 var ctx = null
 var ctxStatus = false
@@ -20,7 +21,8 @@ export {
   ctxStatus,
   canvasHeight,
   canvasWidth,
-  personColor
+  personColor,
+  fps
 }
 
 export function canvasResize () {
