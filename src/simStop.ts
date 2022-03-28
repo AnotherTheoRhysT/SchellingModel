@@ -8,6 +8,10 @@ export function simStop () {
   simStopped = true
 }
 
+export function toggleSimStopped () {
+  simStopped = !simStopped
+}
+
 export {
   simStopped
 }

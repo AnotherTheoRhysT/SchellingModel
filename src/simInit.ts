@@ -24,6 +24,16 @@ var person = {
   status: 'healthy'
 }
 
+export function gridInit (grid) {
+  for(let i: number = 0; i < canvasWidth; i++) {
+    grid[i] = [];
+    for(let j: number = 0; j < canvasHeight; j++) {
+      grid[i][j] = point;
+    }
+  }
+}
+
+let testI = 0
 export function simInit () {
   popInitVal = popInit.value
   // infectInitVal = infectInit.value;
@@ -38,12 +48,7 @@ export function simInit () {
   // 65% infection rate
 
   // Grid Initialization
-  for(var i: number = 0; i < canvasWidth; i++) {
-    simGrid[i] = [];
-    for(var j: number = 0; j < canvasHeight; j++) {
-      simGrid[i][j] = point;
-    }
-  }
+  gridInit(simGrid)
 
   console.log(simGrid)
   console.log(infectInitVal)
@@ -61,30 +66,29 @@ export function simInit () {
     popX = Math.round(Math.random() * (canvasWidth - 1))
     popY = Math.round(Math.random() * (canvasHeight - 1))
     if (simGrid[popX][popY].entity != 'person') {
-      simGrid[popX][popY] = person
+      // Shallow copy will do for now since person doesn't have nested obj
+      simGrid[popX][popY] = { ...person }
+
       if (infectInitVal > 0) {
         simGrid[popX][popY].status = 'infected'
         infectInitVal--
-        ctx.fillStyle = personColor.infected
-        ctx.fillRect(popX, popY, 1, 1);
-      } else {
-        ctx.fillStyle = personColor.healthy
-        ctx.fillRect(popX, popY, 1, 1);
-      }
+      } 
+      ctx.fillStyle = personColor[simGrid[popX][popY].status]
+      ctx.fillRect(popX, popY, 1, 1);
     }
   }
 
-  console.log(simGrid)
+  // console.log(
+  //   'END',
+  //   'popInitVal: ' + popInitVal,
+  //   'infectionInitval: ' + infectInitVal,
+  //   'socDistVal: ' + socDistVal,
+  //   'areaVal: ' + areaVal
+  // );
+}
 
-
-
-  console.log(
-    'END',
-    'popInitVal: ' + popInitVal,
-    'infectionInitval: ' + infectInitVal,
-    'socDistVal: ' + socDistVal,
-    'areaVal: ' + areaVal
-  );
+export function updateGrid (newGrid) {
+  simGrid = newGrid
 }
 
 export {
