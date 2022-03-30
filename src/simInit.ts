@@ -1,4 +1,6 @@
 import { canvas, ctx, canvasHeight, canvasWidth, personColor } from "./config.js";
+import { countPop } from "./simRun.js";
+
 
 const popInit = <HTMLInputElement> document.getElementById("popInit"),
   infectInit = <HTMLInputElement> document.getElementById("infectInit"),
@@ -25,14 +27,18 @@ const person = {
   status: 'healthy'
 }
 
+
 export const gridInit = (grid) => {
+  // grid = []
   for(let i: number = 0; i < canvasWidth; i++) {
     grid[i] = [];
     for(let j: number = 0; j < canvasHeight; j++) {
       grid[i][j] = { ...point };
     }
   }
+  console.log(`Grid init count: ${countPop(grid)}`)
 }
+
 
 let testI = 0
 export const simInit = () => {
@@ -51,6 +57,7 @@ export const simInit = () => {
 
   // Grid Initialization
   // console.log('preInit', simGrid, 'person', person)
+  console.log("---SIM INIT---")
   gridInit(simGrid)
   // console.log('postInit', simGrid, 'person', person)
 
@@ -84,6 +91,7 @@ export const simInit = () => {
     }
   }
 
+  console.log(`SPREAD INIT: ${countPop(simGrid)}`)
   // console.log(
   //   'END',
   //   'popInitVal: ' + popInitVal,
@@ -93,9 +101,13 @@ export const simInit = () => {
   // );
 }
 
+
 export const updateGrid = (newGrid) => {
   simGrid = newGrid
+  console.log(`Updated Grid: ${countPop(simGrid)}`)
+
 }
+
 
 export {
   popInitVal,

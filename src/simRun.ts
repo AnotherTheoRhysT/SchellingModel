@@ -2,15 +2,17 @@ import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./conf
 import { popInitVal, infectInitVal, socDistVal, areaVal, simGrid, updateGrid, gridInit } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
+
 export const simReset = () => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   simStop()
 }
 
+
 let moveX: number, moveY: number
 let moveGrid = []
 let simReqId
-let i = 0, j = 0
+let i = 0, j = 0, simRunIteration = 0
 let timeOutId
 
 const randNum = (min: number, max: number): number => {
@@ -19,10 +21,11 @@ const randNum = (min: number, max: number): number => {
   return randInit
 }
 
+
 const movePersons = () => {
   // Init moveGrid
   gridInit(moveGrid)
-  console.log('movePersons')
+  console.log('----movePersons----')
   // console.log('Move Grid:', moveGrid)
   // console.log(`width: ${canvasWidth}; height: ${canvasHeight}`)
   for (let x: number = 0; x < canvasWidth; x++) {
@@ -40,6 +43,8 @@ const movePersons = () => {
           } else {
             moveGrid[x][y] = simGrid[x][y]
           }  
+        } else {
+          moveGrid[x][y] = simGrid[x][y]
         }
       } else {
         moveGrid[x][y] = simGrid[x][y]
@@ -48,11 +53,12 @@ const movePersons = () => {
   }
   console.log(`movePerson: ${j++}`)
 
-
+  console.log(`MOVE GRID: ${countPop(moveGrid)}`)
   updateGrid(moveGrid)
   // console.log(simGrid)
   // console.log(moveGrid[50][50])
 }
+
 
 export const updateCanvas = (newGrid) => {
   for (let x = 0; x < canvasWidth; x++) {
@@ -64,20 +70,22 @@ export const updateCanvas = (newGrid) => {
   }
 }
 
-export const countPop = (grid) => {
+
+export const countPop = (grid): number => {
   let simPopHealth = 0
   for(let x: number = 0; x < canvasWidth; x++) {
-    simPopHealth += grid[i].filter( point => point.entity == 'person' ).length
+    simPopHealth += grid[x].filter( point => point.entity == 'person' ).length
   }
-  console.log('simPopHealth', simPopHealth)
+  return simPopHealth
 }
 
+
 export const simRun = () => {
-  countPop(simGrid)
+  console.log(`Iteration: ${simRunIteration++}; simRun: ${countPop(simGrid)}`)
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   movePersons()
-  updateCanvas(simGrid)
+  // updateCanvas(simGrid)
 
   timeOutId =  setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)
@@ -85,6 +93,7 @@ export const simRun = () => {
     if (i > 50) cancelAnimationFrame(simReqId)
   }, 1000/fps)
 }
+
 
 const updateTestX = (objTest) => {
   console.log('3:',objTest)
@@ -106,13 +115,13 @@ export const simTest = () => {
   // }, 1000/fps)
 
 
-  console.log('1:',objTest)
-  updateTestX(objTest)
-  console.log('2:',objTest)
+  // console.log('1:',objTest)
+  // updateTestX(objTest)
+  // console.log('2:',objTest)
 
-  // for (let i = 0; i < 50; i++) {
-  //   console.log(randNum(-1, 1))
-  // }
+  for (let i = 0; i < 50; i++) {
+    console.log(randNum(-1, 1))
+  }
   // console.log(personColor['infected'], personColor.infected)
   // test[1][1] = 'test'
   // console.log(test)
@@ -128,6 +137,7 @@ export const simTest = () => {
   //   'areaVal: ' + areaVal
   // );
 }
+
 
 export {
   simReqId,

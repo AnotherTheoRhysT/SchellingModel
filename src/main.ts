@@ -3,6 +3,7 @@ import { canvas, canvasHeight, canvasResize, canvasWidth, ctx, ctxStatus, fps } 
 import { simInit } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
+
 if (!ctxStatus) {
   // Canvas not supported
   console.log('Canvas not supported')
@@ -12,8 +13,10 @@ if (!ctxStatus) {
   canvasResize()
 }
 
+
 // For Testing
 (<HTMLInputElement>document.getElementById('popInit')).value =  String(canvasHeight * canvasWidth / 2)
+
 
 document.getElementById('simStartBtn').onclick = () => {
   simReset()
@@ -23,9 +26,11 @@ document.getElementById('simStartBtn').onclick = () => {
   }, 1000/fps)
 }
 
+
 document.getElementById('simStopBtn').onclick = () => {
   simStop()
 }
+
 
 document.getElementById('testBtn').onclick = () => {
   simTest()
