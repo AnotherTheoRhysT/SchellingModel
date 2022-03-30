@@ -1,16 +1,17 @@
 import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./config.js";
 import { popInitVal, infectInitVal, socDistVal, areaVal, simGrid, updateGrid, gridInit } from "./simInit.js";
-import { simStop, simStopped, toggleSimStopped } from "./simStop.js";
+import { simStop } from "./simStop.js";
 
 export const simReset = () => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  toggleSimStopped()
+  simStop()
 }
 
 let moveX: number, moveY: number
 let moveGrid = []
 let simReqId
 let i = 0, j = 0
+let timeOutId
 
 const randNum = (min: number, max: number): number => {
   let range: number = max - min
@@ -65,13 +66,8 @@ export const updateCanvas = (newGrid) => {
 
 export const countPop = (grid) => {
   let simPopHealth = 0
-  for(let i: number = 0; i < canvasWidth; i++) {
-    simPopHealth += grid[i].filter( point => 
-      // if (index < 10) {
-      //   console.log(`filtTest ${index}`, point, point.entity)
-      // }
-      point.entity == 'person'
-    ).length
+  for(let x: number = 0; x < canvasWidth; x++) {
+    simPopHealth += grid[i].filter( point => point.entity == 'person' ).length
   }
   console.log('simPopHealth', simPopHealth)
 }
@@ -83,10 +79,10 @@ export const simRun = () => {
   movePersons()
   updateCanvas(simGrid)
 
-  setTimeout(() => {
+  timeOutId =  setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)
-    console.log('simStopped', simStopped)
-    if (i > 50 || simStopped) cancelAnimationFrame(simReqId)
+    // console.log('simStopped', simStopped)
+    if (i > 50) cancelAnimationFrame(simReqId)
   }, 1000/fps)
 }
 
@@ -134,5 +130,6 @@ export const simTest = () => {
 }
 
 export {
-  simReqId
+  simReqId,
+  timeOutId
 }
