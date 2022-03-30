@@ -1,5 +1,5 @@
 import { simRun, simTest, simReset, simReqId } from "./simRun.js";
-import { canvas, canvasResize, ctx, ctxStatus, fps } from "./config.js";
+import { canvas, canvasHeight, canvasResize, canvasWidth, ctx, ctxStatus, fps } from "./config.js";
 import { simInit } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
@@ -12,10 +12,15 @@ if (!ctxStatus) {
   canvasResize()
 }
 
+// For Testing
+(<HTMLInputElement>document.getElementById('popInit')).value =  String(canvasHeight * canvasWidth / 2)
+
 document.getElementById('simStartBtn').onclick = () => {
   simReset()
   simInit()
-  simRun()
+  setTimeout(() => {
+    simRun()
+  }, 1000/fps)
 }
 
 document.getElementById('simStopBtn').onclick = () => {

@@ -1,14 +1,14 @@
 import { simReqId } from "./simRun.js"
 
-var simStopped = false
+let simStopped = false
 
-export function simStop () {
+export const simStop = () => {
   cancelAnimationFrame(simReqId)
   // Added stop guard in case setTimeout prevent cancelAnimationFrame from working
   simStopped = true
 }
 
-export function toggleSimStopped () {
+export const toggleSimStopped = () => {
   simStopped = !simStopped
 }
 
