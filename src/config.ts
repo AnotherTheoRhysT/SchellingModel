@@ -4,8 +4,12 @@ const canvasWidth = 100
 const fps = 1
 
 const personColor = {
-  healthy: '#27d618',
-  infected: '#de1b1b'
+  susceptible: '#1753d4', // Blue
+  vaccinated: '#27d618', // Green
+  infected: '#de1b1b', // Red
+	dead: '#69402f', // Brown
+  // infected but not contagious
+  uncontagious: '#bd1e9a' // Pink
 }
 
 
