@@ -2,8 +2,6 @@ import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./conf
 import { popInitVal, infectInitVal, socDistVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
-// const ExcelJS = require('exceljs')
-
 
 export const simReset = () => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -27,15 +25,8 @@ const randNum = (min: number, max: number): number => {
 const movePersons = () => {
   // Init moveGrid
   moveGrid = emptyGridDeepCopy()
-  /**
-   * TODO: Check moveGrid before moving person
-   */
-  console.log('----movePersons----')
-  // console.log('Move Grid:', moveGrid)
-  // console.log(`width: ${canvasWidth}; height: ${canvasHeight}`)
   for (let x: number = 0; x < canvasWidth; x++) {
     for (let y: number = 0; y < canvasHeight; y++) {
-      // if (y < 10 && x < 10) console.log(simGrid[x][y])
       if (simGrid[x][y].entity == 'person') {
         // Move person
         moveX = x + randNum(-1, 1)
@@ -60,13 +51,6 @@ const movePersons = () => {
       }
     }
   }
-  // console.log(`movePerson: ${j++}`)
-
-  // console.log(`MOVE GRID: ${countPop(moveGrid)};`, moveGrid)
-  // console.log(`OLD GRID ${countPop(simGrid)}`, simGrid)
-  // updateGrid(moveGrid)
-  // console.log(simGrid)
-  // console.log(moveGrid[50][50])
 }
 
 
@@ -85,15 +69,9 @@ export const updateCanvas = (newGrid) => {
 
 export const countPop = (grid): number => {
   let simPopHealth = 0
-  // console.log('---COUNT POP---')
-  // console.log(grid)
-  // console.log(simPopHealth)
   for(let x: number = 0; x < canvasWidth; x++) {
     simPopHealth += grid[x].filter( point => point.entity == 'person' ).length
   }
-  // console.log(grid)
-  // console.log(simPopHealth)
-  // console.log('---COUNT POP---')
   return simPopHealth
 }
 
@@ -152,14 +130,6 @@ export const simRun = () => {
 }
 
 
-const updateTestX = (objTest) => {
-  console.log('3:',objTest)
-  objTest.testX++
-  console.log('4:',objTest)
-}
-const objTest = {
-  testX: 0
-}
 let testX = 0, testY = 0
 export const simTest = () => {
   // ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -171,41 +141,6 @@ export const simTest = () => {
   //   // console.log('simStopped', simStopped)
   //   if (i > 50) cancelAnimationFrame(simReqId)
   // }, 1000/fps)
-
-  const a = {'test1': true, 'test2': false}
-  const b = {...a}
-  console.log(a,b)
-  b.test1 = false
-  console.log(a,b)
-
-
-  // setTimeout(() => {
-  //   simReqId = requestAnimationFrame(simTest)
-  //   if (testX > 50 || simStopped) cancelAnimationFrame(simReqId)
-  // }, 1000/fps)
-
-
-  // console.log('1:',objTest)
-  // updateTestX(objTest)
-  // console.log('2:',objTest)
-
-  // for (let i = 0; i < 50; i++) {
-  //   console.log(randNum(-1, 1))
-  // }
-  // console.log(personColor['infected'], personColor.infected)
-  // test[1][1] = 'test'
-  // console.log(test)
-
-  // for (let index = 0; index < 100; index++) {
-  //   console.log(Math.round(Math.random() * 850))
-  // }
-
-  // console.log(
-  //   'popInitVal: ' + popInitVal,
-  //   'infectionInitval: ' + infectInitVal,
-  //   'socDistVal: ' + socDistVal,
-  //   'areaVal: ' + areaVal
-  // );
 }
 
 

@@ -13,11 +13,6 @@ const personColor = {
 }
 
 
-// export function updateCtxPx () {
-//   ctx.fillStyle = personColor.infected
-// }
-
-
 let ctx = null
 let ctxStatus = false
 
