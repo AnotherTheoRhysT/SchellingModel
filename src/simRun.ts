@@ -2,6 +2,8 @@ import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./conf
 import { popInitVal, infectInitVal, socDistVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
+// const ExcelJS = require('exceljs')
+
 
 export const simReset = () => {
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -25,6 +27,9 @@ const randNum = (min: number, max: number): number => {
 const movePersons = () => {
   // Init moveGrid
   moveGrid = emptyGridDeepCopy()
+  /**
+   * TODO: Check moveGrid before moving person
+   */
   console.log('----movePersons----')
   // console.log('Move Grid:', moveGrid)
   // console.log(`width: ${canvasWidth}; height: ${canvasHeight}`)
@@ -38,7 +43,7 @@ const movePersons = () => {
 
         // Constrain movement within the grid
         if (moveX >= 0 && moveX < canvasWidth && moveY >= 0 && moveY < canvasHeight) {
-          if (simGrid[moveX][moveY].entity == 'space') {
+          if (simGrid[moveX][moveY].entity != 'person' && moveGrid[moveX][moveY].entity != 'person') {
             // If point is free; person can move to said point
             moveGrid[moveX][moveY] = { ...simGrid[x][y] }
           } else {
@@ -49,7 +54,7 @@ const movePersons = () => {
           // If it goes beyond the grid, then it stays
           moveGrid[x][y] = { ...simGrid[x][y] }
         }
-      } else {
+      } else if (moveGrid[x][y].entity != 'person') {
         // Space
         moveGrid[x][y] = { ...simGrid[x][y] }
       }
@@ -95,9 +100,40 @@ export const countPop = (grid): number => {
 
 export const simRun = () => {
   console.log(`Iteration: ${simRunIteration++}; simRun: ${countPop(simGrid)}`)
+  movePersons()
+
+  // EXPORT GRID TO CSV
+  // console.log('CSV')
+  // if (simRunIteration <= 6) {
+  //   var CsvString = "SimGrid\r\n";
+    
+  //   simGrid.forEach(function(RowItem, RowIndex) {
+  //     RowItem.forEach(function(ColItem, ColIndex) {
+  //       CsvString += ( (ColItem.entity=='person') ? (ColItem.status=='susceptible'? '1': '2') : '0' ) + ',';
+  //     });
+  //     CsvString += "\r\n";
+  //   });
+  //   CsvString += "END"
+
+  //   CsvString += "\r\n\r\nMove Grid\r\n"
+  //   moveGrid.forEach(function(RowItem, RowIndex) {
+  //     RowItem.forEach(function(ColItem, ColIndex) {
+  //       CsvString += ( (ColItem.entity=='person') ? (ColItem.status=='susceptible'? '1': '2') : '0' ) + ',';
+  //     });
+  //     CsvString += "\r\n";
+  //   });
+  //   CsvString += "END"
+
+  //   CsvString = "data:application/csv," + encodeURIComponent(CsvString);
+  //   var x = document.createElement('a');
+  //   x.setAttribute("href", CsvString );
+  //   x.setAttribute("download",`Iteration-${simRunIteration}.csv`);
+  //   document.body.appendChild(x);
+  //   x.click();
+  // }
+
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  movePersons()
   console.log(simGrid)
   updateGrid(moveGrid)
   console.log(simGrid)
@@ -111,7 +147,7 @@ export const simRun = () => {
   timeOutId =  setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)
     // console.log('simStopped', simStopped)
-    if (i > 50) cancelAnimationFrame(simReqId)
+    if (i > 10) cancelAnimationFrame(simReqId)
   }, 1000/fps)
 }
 
@@ -126,15 +162,22 @@ const objTest = {
 }
 let testX = 0, testY = 0
 export const simTest = () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillRect(testX++, testY++, 1, 1)
+  // ctx.fillRect(testX++, testY++, 1, 1)
 
-  timeOutId =  setTimeout(() => {
-    simReqId = requestAnimationFrame(simTest)
-    // console.log('simStopped', simStopped)
-    if (i > 50) cancelAnimationFrame(simReqId)
-  }, 1000/fps)
+  // timeOutId =  setTimeout(() => {
+  //   simReqId = requestAnimationFrame(simTest)
+  //   // console.log('simStopped', simStopped)
+  //   if (i > 50) cancelAnimationFrame(simReqId)
+  // }, 1000/fps)
+
+  const a = {'test1': true, 'test2': false}
+  const b = {...a}
+  console.log(a,b)
+  b.test1 = false
+  console.log(a,b)
+
 
   // setTimeout(() => {
   //   simReqId = requestAnimationFrame(simTest)
@@ -146,9 +189,9 @@ export const simTest = () => {
   // updateTestX(objTest)
   // console.log('2:',objTest)
 
-  for (let i = 0; i < 50; i++) {
-    console.log(randNum(-1, 1))
-  }
+  // for (let i = 0; i < 50; i++) {
+  //   console.log(randNum(-1, 1))
+  // }
   // console.log(personColor['infected'], personColor.infected)
   // test[1][1] = 'test'
   // console.log(test)
