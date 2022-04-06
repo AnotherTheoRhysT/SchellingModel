@@ -4,6 +4,7 @@
         "watch": true,
         "lib": ["DOM", "ESNext"],
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "types": ["node"]
     }
 }

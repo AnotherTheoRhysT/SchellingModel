@@ -18,25 +18,39 @@ let popX, popY
 let simPopHealth
 
 let simGrid = []
+let emptyGrid = []
 const point = {
   entity: 'space',
   status: null
 }
 const person = {
   entity: 'person',
-  status: 'healthy'
+  status: 'susceptible'
 }
 
 
-export const gridInit = (grid) => {
-  // grid = []
+// export const gridInit = (grid) => {
+//   // grid = []
+//   for(let i: number = 0; i < canvasWidth; i++) {
+//     grid[i] = [];
+//     for(let j: number = 0; j < canvasHeight; j++) {
+//       grid[i][j] = { ...point };
+//     }
+//   }
+//   console.log(`Grid init count: ${countPop(grid)}`)
+// }
+
+const emptyGridInit = () => {
   for(let i: number = 0; i < canvasWidth; i++) {
-    grid[i] = [];
+    emptyGrid[i] = [];
     for(let j: number = 0; j < canvasHeight; j++) {
-      grid[i][j] = { ...point };
+      emptyGrid[i][j] = { ...point };
     }
   }
-  console.log(`Grid init count: ${countPop(grid)}`)
+}
+
+export const emptyGridDeepCopy = () => {
+  return JSON.parse(JSON.stringify(emptyGrid))
 }
 
 
@@ -58,7 +72,8 @@ export const simInit = () => {
   // Grid Initialization
   // console.log('preInit', simGrid, 'person', person)
   console.log("---SIM INIT---")
-  gridInit(simGrid)
+  emptyGridInit()
+  simGrid = emptyGridDeepCopy()
   // console.log('postInit', simGrid, 'person', person)
 
   // console.log(simGrid)
@@ -103,9 +118,13 @@ export const simInit = () => {
 
 
 export const updateGrid = (newGrid) => {
-  simGrid = newGrid
-  console.log(`Updated Grid: ${countPop(simGrid)}`)
+  simGrid = JSON.parse(JSON.stringify(newGrid))
+  // simGrid = JSON.parse(JSON.stringify(newGrid))
+  // console.log(`Updated Grid: ${countPop(simGrid)}`)
+}
 
+export const copyEmptyGrid = () => {
+  JSON.parse
 }
 
 

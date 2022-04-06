@@ -1,6 +1,6 @@
 const canvas = <HTMLCanvasElement> document.getElementById('sim')
-const canvasHeight = 100
-const canvasWidth = 100
+const canvasHeight = 10
+const canvasWidth = 10
 const fps = 1
 
 const personColor = {

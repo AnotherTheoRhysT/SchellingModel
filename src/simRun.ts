@@ -1,5 +1,5 @@
 import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./config.js";
-import { popInitVal, infectInitVal, socDistVal, areaVal, simGrid, updateGrid, gridInit } from "./simInit.js";
+import { popInitVal, infectInitVal, socDistVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
 
@@ -24,43 +24,50 @@ const randNum = (min: number, max: number): number => {
 
 const movePersons = () => {
   // Init moveGrid
-  gridInit(moveGrid)
+  moveGrid = emptyGridDeepCopy()
   console.log('----movePersons----')
   // console.log('Move Grid:', moveGrid)
   // console.log(`width: ${canvasWidth}; height: ${canvasHeight}`)
   for (let x: number = 0; x < canvasWidth; x++) {
     for (let y: number = 0; y < canvasHeight; y++) {
+      // if (y < 10 && x < 10) console.log(simGrid[x][y])
       if (simGrid[x][y].entity == 'person') {
         // Move person
         moveX = x + randNum(-1, 1)
         moveY = y + randNum(-1, 1)
 
-        
         // Constrain movement within the grid
         if (moveX >= 0 && moveX < canvasWidth && moveY >= 0 && moveY < canvasHeight) {
           if (simGrid[moveX][moveY].entity == 'space') {
-            moveGrid[moveX][moveY] = simGrid[x][y]
+            // If point is free; person can move to said point
+            moveGrid[moveX][moveY] = { ...simGrid[x][y] }
           } else {
-            moveGrid[x][y] = simGrid[x][y]
+            // If point isn't free; person stays
+            moveGrid[x][y] = { ...simGrid[x][y] }
           }  
         } else {
-          moveGrid[x][y] = simGrid[x][y]
+          // If it goes beyond the grid, then it stays
+          moveGrid[x][y] = { ...simGrid[x][y] }
         }
       } else {
-        moveGrid[x][y] = simGrid[x][y]
+        // Space
+        moveGrid[x][y] = { ...simGrid[x][y] }
       }
     }
   }
-  console.log(`movePerson: ${j++}`)
+  // console.log(`movePerson: ${j++}`)
 
-  console.log(`MOVE GRID: ${countPop(moveGrid)}`)
-  updateGrid(moveGrid)
+  // console.log(`MOVE GRID: ${countPop(moveGrid)};`, moveGrid)
+  // console.log(`OLD GRID ${countPop(simGrid)}`, simGrid)
+  // updateGrid(moveGrid)
   // console.log(simGrid)
   // console.log(moveGrid[50][50])
 }
 
 
 export const updateCanvas = (newGrid) => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   for (let x = 0; x < canvasWidth; x++) {
     for (let y = 0; y < canvasHeight; y++) {
       if (newGrid[x][y].entity == 'person')
@@ -73,19 +80,33 @@ export const updateCanvas = (newGrid) => {
 
 export const countPop = (grid): number => {
   let simPopHealth = 0
+  // console.log('---COUNT POP---')
+  // console.log(grid)
+  // console.log(simPopHealth)
   for(let x: number = 0; x < canvasWidth; x++) {
     simPopHealth += grid[x].filter( point => point.entity == 'person' ).length
   }
+  // console.log(grid)
+  // console.log(simPopHealth)
+  // console.log('---COUNT POP---')
   return simPopHealth
 }
 
 
 export const simRun = () => {
   console.log(`Iteration: ${simRunIteration++}; simRun: ${countPop(simGrid)}`)
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
   movePersons()
-  // updateCanvas(simGrid)
+  console.log(simGrid)
+  updateGrid(moveGrid)
+  console.log(simGrid)
+
+  // if (simRunIteration%2) {
+    
+  // }
+    
+  updateCanvas(simGrid)
 
   timeOutId =  setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)
@@ -105,9 +126,15 @@ const objTest = {
 }
 let testX = 0, testY = 0
 export const simTest = () => {
-  // ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // ctx.fillRect(testX++, testY++, 10, 10)
+  ctx.fillRect(testX++, testY++, 1, 1)
+
+  timeOutId =  setTimeout(() => {
+    simReqId = requestAnimationFrame(simTest)
+    // console.log('simStopped', simStopped)
+    if (i > 50) cancelAnimationFrame(simReqId)
+  }, 1000/fps)
 
   // setTimeout(() => {
   //   simReqId = requestAnimationFrame(simTest)
