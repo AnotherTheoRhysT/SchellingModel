@@ -9,8 +9,8 @@ header h1 {
   border: 1px solid black;
   display: inherit;
   margin: auto;
-  width: 50rem;
-  height: 50rem;
+  /* width: 50rem;
+  height: 50rem; */
   /* width: 850px;
   height: 850px; */
 }

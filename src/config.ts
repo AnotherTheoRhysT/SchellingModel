@@ -1,7 +1,7 @@
 const canvas = <HTMLCanvasElement> document.getElementById('sim')
-const canvasHeight = 10
-const canvasWidth = 10
-const fps = 1
+const canvasHeight = 500
+const canvasWidth = 500
+const fps = 20
 
 const personColor = {
   susceptible: '#1753d4', // Blue

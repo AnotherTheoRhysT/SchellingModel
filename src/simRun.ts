@@ -40,7 +40,7 @@ const movePersons = () => {
           } else {
             // If point isn't free; person stays
             moveGrid[x][y] = { ...simGrid[x][y] }
-          }  
+          }
         } else {
           // If it goes beyond the grid, then it stays
           moveGrid[x][y] = { ...simGrid[x][y] }
@@ -54,14 +54,72 @@ const movePersons = () => {
 }
 
 
+const isInGrid = (coordinate, axis) => {
+  switch (axis) {
+    case 'x':
+      return (coordinate >= 0 && coordinate < canvasWidth)
+    case 'y':
+      return (coordinate >= 0 && coordinate < canvasHeight)
+  }
+}
+
+
+const infectPersons = () => {
+  // Uses moveGrid
+  for (let x: number = 0; x < canvasWidth; x++) {
+    for (let y: number = 0; y < canvasHeight; y++) {
+      // Check surrounding of infected person
+      /**
+       * * Testing Rules
+       * Distance
+       * 1px = 80%
+       * 2px = 60%
+       * 3px = 40%
+       * 4px = 20%
+       */
+      if (moveGrid[x][y].status == 'infected') {
+        for (let xOffset = -4; xOffset <= 4; xOffset++) {
+          let xCoord = x + xOffset
+          if (isInGrid(xCoord, 'x')) {
+            for (let yOffset = -4; yOffset <= 4; yOffset++) {
+              let yCoord = y + yOffset
+              if (isInGrid(yCoord, 'y') && moveGrid[xCoord][yCoord].status == 'susceptible' && xCoord != x && yCoord != y) {
+                // distance formula
+                let dist = Math.sqrt((xOffset)**2 + (yOffset)**2)
+                switch (Math.round(dist)) {
+                  case 1:
+                    // 1px away = 80% infection rate
+                    if (Math.random() <= 0.08) moveGrid[xCoord][yCoord].status = 'infected'
+                    break;
+                  case 2:
+                    if (Math.random() <= 0.06) moveGrid[xCoord][yCoord].status = 'infected'
+                    break;
+                  case 3:
+                    if (Math.random() <= 0.04) moveGrid[xCoord][yCoord].status = 'infected'
+                    break;
+                  case 4:
+                    if (Math.random() <= 0.02) moveGrid[xCoord][yCoord].status = 'infected'
+                    break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }    
+  }
+}
+
+
 export const updateCanvas = (newGrid) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (let x = 0; x < canvasWidth; x++) {
     for (let y = 0; y < canvasHeight; y++) {
-      if (newGrid[x][y].entity == 'person')
-      ctx.fillStyle = personColor[simGrid[x][y].status]
-      ctx.fillRect(x, y, 1, 1);
+      if (newGrid[x][y].entity == 'person') {
+        ctx.fillStyle = personColor[simGrid[x][y].status]
+        ctx.fillRect(x, y, 1, 1);
+      }
     }
   }
 }
@@ -77,8 +135,6 @@ export const countPop = (grid): number => {
 
 
 export const simRun = () => {
-  console.log(`Iteration: ${simRunIteration++}; simRun: ${countPop(simGrid)}`)
-  movePersons()
 
   // EXPORT GRID TO CSV
   // console.log('CSV')
@@ -112,35 +168,42 @@ export const simRun = () => {
 
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  console.log(simGrid)
+  movePersons()
+  infectPersons()
   updateGrid(moveGrid)
-  console.log(simGrid)
 
-  // if (simRunIteration%2) {
-    
-  // }
-    
   updateCanvas(simGrid)
 
   timeOutId =  setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)
-    // console.log('simStopped', simStopped)
-    if (i > 10) cancelAnimationFrame(simReqId)
+    // Stop after
+    // if (++i > 10) cancelAnimationFrame(simReqId)
   }, 1000/fps)
 }
 
 
-let testX = 0, testY = 0
 export const simTest = () => {
-  // ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let testPoint = {
+    x: 4,
+    y: 4
+  }
+  let CsvStr = ''
+  for (let x = -4; x <= 4; x++) {
+    for (let y = -4; y <= 4; y++) {
+      let dist = Math.round(Math.sqrt((x)**2 + (y)**2))
+      CsvStr += `${dist},`
+    }
+    CsvStr += "\r\n";
+  }
 
-  // ctx.fillRect(testX++, testY++, 1, 1)
 
-  // timeOutId =  setTimeout(() => {
-  //   simReqId = requestAnimationFrame(simTest)
-  //   // console.log('simStopped', simStopped)
-  //   if (i > 50) cancelAnimationFrame(simReqId)
-  // }, 1000/fps)
+  CsvStr = "data:application/csv," + encodeURIComponent(CsvStr);
+  var x = document.createElement('a');
+  x.setAttribute("href", CsvStr );
+  x.setAttribute("download",`distanceTest1.csv`);
+  document.body.appendChild(x);
+  x.click();
+
 }
 
 
