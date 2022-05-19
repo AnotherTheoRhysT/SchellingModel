@@ -1,5 +1,5 @@
 import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./config.js";
-import { popInitVal, infectInitVal, socDistVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy } from "./simInit.js";
+import { popInitVal, infectInitVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy, dayVal, updateDay, alertLvlVal, betaTransmission } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
 
@@ -14,6 +14,9 @@ let moveGrid = []
 let simReqId
 let i = 0, j = 0, simRunIteration = 0
 let timeOutId
+let travelDist
+let infectProb
+let distProb
 
 const randNum = (min: number, max: number): number => {
   let range: number = max - min
@@ -27,10 +30,27 @@ const movePersons = () => {
   moveGrid = emptyGridDeepCopy()
   for (let x: number = 0; x < canvasWidth; x++) {
     for (let y: number = 0; y < canvasHeight; y++) {
-      if (simGrid[x][y].entity == 'person') {
+      if (simGrid[x][y].entity == 'person' && simGrid[x][y].status != 'dead' && simGrid[x][y].severity != 'severe' && simGrid[x][y].severity != 'critical') {
         // Move person
-        moveX = x + randNum(-1, 1)
-        moveY = y + randNum(-1, 1)
+        switch (alertLvlVal) {
+          case 1:
+            travelDist = 5
+            break;
+          case 2:
+            travelDist = 4
+            break;
+          case 3:
+            travelDist = 3
+            break;
+          case 4:
+            travelDist = 2
+            break;
+          case 5:
+            travelDist = 1
+            break;
+        }
+        moveX = x + randNum(travelDist * -1, travelDist)
+        moveY = y + randNum(travelDist * -1, travelDist)
 
         // Constrain movement within the grid
         if (moveX >= 0 && moveX < canvasWidth && moveY >= 0 && moveY < canvasHeight) {
@@ -76,38 +96,98 @@ const infectPersons = () => {
        * 2px = 60%
        * 3px = 40%
        * 4px = 20%
+       * 
+       * Multiplied by betaTransmission value
        */
       if (moveGrid[x][y].status == 'infected') {
-        for (let xOffset = -4; xOffset <= 4; xOffset++) {
-          let xCoord = x + xOffset
-          if (isInGrid(xCoord, 'x')) {
-            for (let yOffset = -4; yOffset <= 4; yOffset++) {
-              let yCoord = y + yOffset
-              if (isInGrid(yCoord, 'y') && moveGrid[xCoord][yCoord].status == 'susceptible' && xCoord != x && yCoord != y) {
-                // distance formula
-                let dist = Math.sqrt((xOffset)**2 + (yOffset)**2)
-                switch (Math.round(dist)) {
-                  case 1:
-                    // 1px away = 80% infection rate
-                    if (Math.random() <= 0.08) moveGrid[xCoord][yCoord].status = 'infected'
-                    break;
-                  case 2:
-                    if (Math.random() <= 0.06) moveGrid[xCoord][yCoord].status = 'infected'
-                    break;
-                  case 3:
-                    if (Math.random() <= 0.04) moveGrid[xCoord][yCoord].status = 'infected'
-                    break;
-                  case 4:
-                    if (Math.random() <= 0.02) moveGrid[xCoord][yCoord].status = 'infected'
-                    break;
+        moveGrid[x][y].daysInfect = (moveGrid[x][y].daysInfect + 1) || 1
+
+        // The length of time after exposure before an individual becomes infectious is set by default to be a log-normal distribution with a mean of 4.6 days
+        // daysInfect rounded off to flat value of 5 days
+        // 
+        if (moveGrid[x][y].severity != null) {
+          for (let xOffset = -4; xOffset <= 4; xOffset++) {
+            let xCoord = x + xOffset
+            if (isInGrid(xCoord, 'x')) {
+              for (let yOffset = -4; yOffset <= 4; yOffset++) {
+                let yCoord = y + yOffset
+                if (isInGrid(yCoord, 'y') && moveGrid[xCoord][yCoord].status == 'susceptible' && xCoord != x && yCoord != y) {
+                  // distance formula
+                  let dist = Math.sqrt((xOffset)**2 + (yOffset)**2)
+                  switch (Math.round(dist)) {
+                    case 1: 
+                      // 1px away = 80% infection rate
+                      distProb = 0.8
+                      break;
+                    case 2:
+                      distProb = 0.6
+                      break;
+                      case 3:
+                      distProb = 0.4
+                      break;
+                    case 4:
+                      distProb = 0.2
+                      break;
+                  }
+                  infectProb = distProb * betaTransmission * 35;
+                  if (Math.random() <= infectProb) {
+                    moveGrid[xCoord][yCoord].status = 'infected'
+                    moveGrid[xCoord][yCoord].daysInfect = 1
+                  }
                 }
               }
             }
           }
         }
+
+        // (https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1009149.t001)
+        // Probability of severity
+
+        // Infect to either symptomatic or asymptomatic
+        if (moveGrid[x][y].daysInfect == 6) {
+          if (Math.random() <= 0.675) {
+            moveGrid[x][y].severity = 'mild'
+          } else {
+            moveGrid[x][y].severity = 'asymptomatic'
+          }
+        }
+
+        if (moveGrid[x][y].severity == 'mild' && moveGrid[x][y].daysInfect >= 13 && Math.random() <= 0.04554) {
+          moveGrid[x][y].severity = 'severe'
+        }
+
+        if (moveGrid[x][y].severity == 'severe' && moveGrid[x][y].daysInfect >= 15 && Math.random() <= 0.008227) {
+          moveGrid[x][y].severity = 'critical'
+        }
+
+        if (moveGrid[x][y].severity == 'critical' && moveGrid[x][y].daysInfect >= 21 && Math.random() <= 0.001955) {
+          moveGrid[x][y].status = 'dead'
+          moveGrid[x][y].severity = null
+        }
+
+        // Recovery Logic
+        switch (moveGrid[x][y].severity) {
+          case 'asymptomatic':
+          case 'mild':
+            if (moveGrid[x][y].daysInfect >= 14) recoverPerson(x,y)
+            break;
+          case 'severe':
+            if (moveGrid[x][y].daysInfect >= 31) recoverPerson(x,y)
+            break;
+          case 'critical':
+            if (moveGrid[x][y].daysInfect >= 33) recoverPerson(x,y)
+            break;
+        }
       }
     }    
   }
+}
+
+
+const recoverPerson = (x,y) => {
+  moveGrid[x][y].status = 'recovered'
+  moveGrid[x][y].severity = null
+  moveGrid[x][y].daysInfect = 0
 }
 
 
@@ -117,7 +197,11 @@ export const updateCanvas = (newGrid) => {
   for (let x = 0; x < canvasWidth; x++) {
     for (let y = 0; y < canvasHeight; y++) {
       if (newGrid[x][y].entity == 'person') {
-        ctx.fillStyle = personColor[simGrid[x][y].status]
+        if (newGrid[x][y].severity != null) {
+          ctx.fillStyle = personColor[simGrid[x][y].severity]
+        } else {
+          ctx.fillStyle = personColor[simGrid[x][y].status]
+        }
         ctx.fillRect(x, y, 1, 1);
       }
     }
@@ -173,6 +257,9 @@ export const simRun = () => {
   updateGrid(moveGrid)
 
   updateCanvas(simGrid)
+
+  // Update day counter
+  updateDay()
 
   timeOutId =  setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)

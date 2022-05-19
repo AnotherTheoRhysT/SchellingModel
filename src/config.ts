@@ -1,15 +1,28 @@
 const canvas = <HTMLCanvasElement> document.getElementById('sim')
 const canvasHeight = 500
 const canvasWidth = 500
-const fps = 20
+const fps = 1
 
 const personColor = {
   susceptible: '#1753d4', // Blue
-  vaccinated: '#27d618', // Green
-  infected: '#de1b1b', // Red
-	dead: '#69402f', // Brown
+  recovered: '#27d618', // Green
+  // Infected but not infectious
+  infected: '#ffdd00', // Yellow
+	dead: '##1c1c1c', // Black
+
+  // Severity
+  asymptomatic: '#bd1e9a', // Pink
+  mild: '#fc8f00', // Orange
+  severe: '#b818b8', // Purple
+  critical: '#db1a1a', // Red
+  // vaccinated: '#27d618', // Green
+  
+  
   // infected but not contagious
-  uncontagious: '#bd1e9a' // Pink
+  // uncontagious: '#bd1e9a' // Pink
+  // mild: ,
+  // asymptomatic: ,
+
 }
 
 

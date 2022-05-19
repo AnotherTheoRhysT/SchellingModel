@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./output.css">
     <link rel="stylesheet" href="./custom.css">
 </head>
-<body>
+<body style="padding: 50px 200px;">
     <header style="text-align: center;">
         <h1>Covid Infection Rate Simulator</h1>
         <h3>By STEM 12 - T2</h3>
@@ -24,28 +24,52 @@
     <section id="input">
 
         <div>
+            <label for="">Day: </label>
+            <input type="number" id="dayCounter" readonly value="0">
+        </div>
+        <div>
+            <label for="">Area: </label>
+            <input type="number" id="area" readonly>
+        </div>
+        <div>
+            <label for="">Population Density: </label>
+            <input type="number" id="popDensity" readonly>
+        </div>
+
+        <div>
             <label for="popInit">Initial Population: </label>
-            <input class="border-b-black border-b-2 m-2" type="number" name="popInit" id="popInit">
+            <input class="border-b-black border-b-2 m-2" type="number" name="popInit" id="popInit" value="50000">
         </div>
 
         <div>
             <label for="infectInit">Inital Infection: </label>
-            <input class="border-b-black border-b-2 m-2" type="number" name="infectInit" id="infectInit">
+            <input class="border-b-black border-b-2 m-2" type="number" name="infectInit" id="infectInit" value="100">
         </div>
 
         <div>
-            <label for="socDist">Social Distancing: </label>
-            <input class="border-b-black border-b-2 m-2" type="text" name="socDist" id="socDist">
+            <label for="">Alert Level:</label><br>
+            <input type="radio" id="lvl1" name="alertLvl" value="1" checked>
+            <label for="lvl1">Alert Level 1</label><br>
+            <input type="radio" id="lvl2" name="alertLvl" value="2">
+            <label for="lvl2">Alert Level 2</label><br>
+            <input type="radio" id="lvl3" name="alertLvl" value="3">
+            <label for="lvl3">Alert Level 3</label><br>
+            <input type="radio" id="lvl4" name="alertLvl" value="4">
+            <label for="lvl4">Alert Level 4</label><br>
+            <input type="radio" id="lvl5" name="alertLvl" value="5">
+            <label for="lvl5">Alert Level 5</label><br>
+            <!-- <label for="socDist">Quarantine Alert Level: </label>
+            <input class="border-b-black border-b-2 m-2" type="text" name="socDist" id="socDist"> -->
         </div>
 
-        <div>
+        <!-- <div>
             <label for="area">Area (in km<sup>2</sup>): </label>
             <input class="border-b-black border-b-2 m-2" type="number" name="area" id="area">
-        </div>
+        </div> -->
 
         <div>
             <label for="duration">Duration (in days): </label>
-            <input class="border-b-black border-b-2 m-2" type="number" name="duration" id="duration">
+            <input class="border-b-black border-b-2 m-2" type="number" name="duration" id="duration" value="90">
         </div>
 
         <button id="simStartBtn">Start Simulation</button>

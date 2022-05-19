@@ -1,6 +1,6 @@
 import { simRun, simTest, simReset, simReqId } from "./simRun.js";
 import { canvas, canvasHeight, canvasResize, canvasWidth, ctx, ctxStatus, fps } from "./config.js";
-import { simInit } from "./simInit.js";
+import { simInit, popInit } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
 
@@ -15,7 +15,9 @@ if (!ctxStatus) {
 
 
 // For Testing
-(<HTMLInputElement>document.getElementById('popInit')).value =  String(canvasHeight * canvasWidth / 2)
+let area = canvasHeight * canvasWidth;
+(<HTMLInputElement>document.getElementById('area')).value = String(area);
+(<HTMLInputElement>document.getElementById('popDensity')).value = String( Number(popInit.value) / area )
 
 
 document.getElementById('simStartBtn').onclick = () => {

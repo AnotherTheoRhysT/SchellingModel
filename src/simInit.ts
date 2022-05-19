@@ -4,41 +4,36 @@ import { countPop } from "./simRun.js";
 
 const popInit = <HTMLInputElement> document.getElementById("popInit"),
   infectInit = <HTMLInputElement> document.getElementById("infectInit"),
-  socDist = <HTMLInputElement> document.getElementById("socDist"),
-  area = <HTMLInputElement> document.getElementById("area")
+  // socDist = <HTMLInputElement> document.getElementById("socDist"),
+  area = <HTMLInputElement> document.getElementById("area"),
+  day = <HTMLInputElement> document.getElementById("dayCounter")
 
-let popInitVal
-// infectInitVal = infectInit.value;
 
-// For testing
-let infectInitVal
-let socDistVal
-let areaVal
-let popX, popY
-let simPopHealth
+let popInitVal,
+  infectInitVal,
+  areaVal,
+  popX, popY,
+  simPopHealth,
+  alertLvl,
+  alertLvlVal,
+  dayVal,
+  betaTransmission
 
 let simGrid = []
 let emptyGrid = []
 const point = {
   entity: 'space',
-  status: null
+  status: null,
+  severity: null,
+  daysInfect: 0
 }
 const person = {
   entity: 'person',
-  status: 'susceptible'
+  status: 'susceptible',
+  severity: null,
+  daysInfect: 0
 }
 
-
-// export const gridInit = (grid) => {
-//   // grid = []
-//   for(let i: number = 0; i < canvasWidth; i++) {
-//     grid[i] = [];
-//     for(let j: number = 0; j < canvasHeight; j++) {
-//       grid[i][j] = { ...point };
-//     }
-//   }
-//   console.log(`Grid init count: ${countPop(grid)}`)
-// }
 
 const emptyGridInit = () => {
   for(let i: number = 0; i < canvasWidth; i++) {
@@ -56,35 +51,41 @@ export const emptyGridDeepCopy = () => {
 
 let testI = 0
 export const simInit = () => {
-  // console.log('start', simGrid, 'person', person)
+  alertLvl = <HTMLInputElement> document.querySelector("input[name=alertLvl]:checked")
   popInitVal = popInit.value
-  // infectInitVal = infectInit.value;
+  infectInitVal = infectInit.value;
+  alertLvlVal = Number(alertLvl.value)
 
-  // For testing
-  // 5% of population is infected
-  infectInitVal = popInitVal * (5 / 100)
+  // Beta transmission rate values based on np.linspace(0.010, 0.020, 5) in CovasimBenchmark.ipnyb
+  switch (alertLvlVal) {
+    case 1:
+      betaTransmission = 0.02
+      break;
+    case 2:
+      betaTransmission = 0.0175
+      break;
+    case 3:
+      betaTransmission = 0.015
+      break;
+    case 4:
+      betaTransmission = 0.0125
+      break;
+    case 5:
+      betaTransmission = 0.01
+      break;
+  }
+  console.log(`AlertLvl: ${alertLvlVal}; Beta: ${betaTransmission}`)
+  day.value = String(0)
+  dayVal = day.value
+  updateDay()
+
   let healthyPop = popInitVal - infectInitVal
-  socDistVal = socDist.value
   areaVal = area.value
 
-  // 65% infection rate
-
   // Grid Initialization
-  // console.log('preInit', simGrid, 'person', person)
   console.log("---SIM INIT---")
   emptyGridInit()
   simGrid = emptyGridDeepCopy()
-  // console.log('postInit', simGrid, 'person', person)
-
-  // console.log(simGrid)
-  // console.log(infectInitVal)
-  // console.log(
-  //   'START',
-  //   'popInitVal: ' + popInitVal,
-  //   'infectionInitval: ' + infectInitVal,
-  //   'socDistVal: ' + socDistVal,
-  //   'areaVal: ' + areaVal
-  // );
 
 
   // Spread population
@@ -106,14 +107,6 @@ export const simInit = () => {
     }
   }
 
-  console.log(`SPREAD INIT: ${countPop(simGrid)}`)
-  // console.log(
-  //   'END',
-  //   'popInitVal: ' + popInitVal,
-  //   'infectionInitval: ' + infectInitVal,
-  //   'socDistVal: ' + socDistVal,
-  //   'areaVal: ' + areaVal
-  // );
 }
 
 
@@ -127,11 +120,18 @@ export const copyEmptyGrid = () => {
   JSON.parse
 }
 
+export const updateDay = () => {
+  day.value = String(++dayVal)
+}
+
 
 export {
+  popInit,
   popInitVal,
   infectInitVal,
-  socDistVal,
   areaVal,
-  simGrid
+  simGrid,
+  alertLvlVal,
+  dayVal,
+  betaTransmission
 }
