@@ -1,6 +1,7 @@
 import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./config.js";
 import { popInitVal, infectInitVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy, dayVal, updateDay, alertLvlVal, betaTransmission, durationVal } from "./simInit.js";
 import { simStop } from "./simStop.js";
+import { addRow, downloadCsv } from "./simExport.js";
 
 
 export const simReset = () => {
@@ -17,6 +18,29 @@ let timeOutId
 let travelDist
 let infectProb
 let distProb
+
+// For csv
+let n_susceptible,
+  n_exposed,
+  n_infectious,
+  n_symptomatic,
+  n_severe,
+  n_critical,
+  n_recovered,
+  n_dead,
+  n_alive
+
+export const initValues = () => {
+  n_susceptible = popInitVal - infectInitVal
+  n_exposed = infectInitVal
+  n_infectious = 0
+  n_symptomatic = 0
+  n_severe = 0
+  n_critical = 0
+  n_recovered = 0
+  n_dead = 0
+  n_alive = popInitVal
+}
 
 const randNum = (min: number, max: number): number => {
   let range: number = max - min
@@ -105,13 +129,13 @@ const infectPersons = () => {
         // The length of time after exposure before an individual becomes infectious is set by default to be a log-normal distribution with a mean of 4.6 days
         // daysInfect rounded off to flat value of 5 days
         // 
-        if (moveGrid[x][y].severity != null) {
+        if (moveGrid[x][y].daysInfect >= 5) {
           for (let xOffset = -4; xOffset <= 4; xOffset++) {
             let xCoord = x + xOffset
             if (isInGrid(xCoord, 'x')) {
               for (let yOffset = -4; yOffset <= 4; yOffset++) {
                 let yCoord = y + yOffset
-                if (isInGrid(yCoord, 'y') && moveGrid[xCoord][yCoord].status == 'susceptible' && xCoord != x && yCoord != y) {
+                if (isInGrid(yCoord, 'y') && (moveGrid[xCoord][yCoord].status == 'susceptible' || moveGrid[xCoord][yCoord].status == 'recovered') && xCoord != x && yCoord != y) {
                   // distance formula
                   let dist = Math.sqrt((xOffset)**2 + (yOffset)**2)
                   switch (Math.round(dist)) {
@@ -133,6 +157,8 @@ const infectPersons = () => {
                   if (Math.random() <= infectProb) {
                     moveGrid[xCoord][yCoord].status = 'infected'
                     moveGrid[xCoord][yCoord].daysInfect = 1
+                    n_susceptible--
+                    n_exposed++
                   }
                 }
               }
@@ -143,10 +169,15 @@ const infectPersons = () => {
         // (https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1009149.t001)
         // Probability of severity
 
+        if (moveGrid[x][y].daysInfect > 5) {
+          n_infectious++
+        }
+
         // Infect to either symptomatic or asymptomatic
         if (moveGrid[x][y].daysInfect == 6) {
           if (Math.random() <= 0.675) {
             moveGrid[x][y].severity = 'mild'
+            n_symptomatic++
           } else {
             moveGrid[x][y].severity = 'asymptomatic'
           }
@@ -154,28 +185,44 @@ const infectPersons = () => {
 
         if (moveGrid[x][y].severity == 'mild' && moveGrid[x][y].daysInfect >= 13 && Math.random() <= 0.04554) {
           moveGrid[x][y].severity = 'severe'
+          n_severe++
         }
 
         if (moveGrid[x][y].severity == 'severe' && moveGrid[x][y].daysInfect >= 15 && Math.random() <= 0.008227) {
           moveGrid[x][y].severity = 'critical'
+          n_severe--
+          n_critical++
         }
 
         if (moveGrid[x][y].severity == 'critical' && moveGrid[x][y].daysInfect >= 21 && Math.random() <= 0.001955) {
           moveGrid[x][y].status = 'dead'
           moveGrid[x][y].severity = null
+          n_exposed--
+          n_critical--
+          n_alive--
+          n_dead++
         }
 
         // Recovery Logic
         switch (moveGrid[x][y].severity) {
           case 'asymptomatic':
+            n_symptomatic++
           case 'mild':
-            if (moveGrid[x][y].daysInfect >= 14) recoverPerson(x,y)
+            if (moveGrid[x][y].daysInfect >= 14) {
+              recoverPerson(x,y)
+            }
             break;
           case 'severe':
-            if (moveGrid[x][y].daysInfect >= 31) recoverPerson(x,y)
+            if (moveGrid[x][y].daysInfect >= 31) {
+              recoverPerson(x,y)
+              n_severe--
+            }
             break;
           case 'critical':
-            if (moveGrid[x][y].daysInfect >= 33) recoverPerson(x,y)
+            if (moveGrid[x][y].daysInfect >= 33) {
+              recoverPerson(x,y)
+              n_critical--
+            }
             break;
         }
       }
@@ -186,8 +233,12 @@ const infectPersons = () => {
 
 const recoverPerson = (x,y) => {
   moveGrid[x][y].status = 'recovered'
-  moveGrid[x][y].severity = null
   moveGrid[x][y].daysInfect = 0
+  n_recovered++
+  n_infectious--
+  n_symptomatic--
+  n_susceptible++
+  n_exposed--
 }
 
 
@@ -257,40 +308,58 @@ export const simRun = () => {
   updateGrid(moveGrid)
 
   updateCanvas(simGrid)
-
-
   // Update day counter
   updateDay()
+
+  addRow(`${dayVal},${n_susceptible},${n_exposed},${n_infectious},${n_symptomatic},${n_severe},${n_critical},${n_recovered},${n_dead},${n_alive}`)
 
   timeOutId = setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)
     // Stop after
-    if (dayVal >= durationVal) cancelAnimationFrame(simReqId)
+    if (dayVal >= durationVal) {
+      cancelAnimationFrame(simReqId)
+      downloadCsv(`animatedSim-AlertLvl${alertLvlVal}-test.csv`)
+    }
   }, 1000/fps)
 }
 
 
 export const simTest = () => {
-  let testPoint = {
-    x: 4,
-    y: 4
-  }
-  let CsvStr = ''
-  for (let x = -4; x <= 4; x++) {
-    for (let y = -4; y <= 4; y++) {
-      let dist = Math.round(Math.sqrt((x)**2 + (y)**2))
-      CsvStr += `${dist},`
-    }
-    CsvStr += "\r\n";
-  }
+  addRow('t,n_susceptible,n_exposed,n_infectious,n_symptomatic,n_severe,n_critical,n_recovered,n_dead,n_alive')
+  addRow('0,49900,100,0,0,0,0,0,0,50000')
+  downloadCsv('test.csv')
+
+  // let data = [
+  //   {
+  //     test: "hello"
+  //   },
+  //   {
+  //     test: "hello 2"
+  //   }
+  // ]
+
+  // // writeXLSX(data, 'test.xlsx')
+
+  // let testPoint = {
+  //   x: 4,
+  //   y: 4
+  // }
+  // let CsvStr = ''
+  // for (let x = -4; x <= 4; x++) {
+  //   for (let y = -4; y <= 4; y++) {
+  //     let dist = Math.round(Math.sqrt((x)**2 + (y)**2))
+  //     CsvStr += `${dist},`
+  //   }
+  //   CsvStr += "\r\n";
+  // }
 
 
-  CsvStr = "data:application/csv," + encodeURIComponent(CsvStr);
-  var x = document.createElement('a');
-  x.setAttribute("href", CsvStr );
-  x.setAttribute("download",`distanceTest1.csv`);
-  document.body.appendChild(x);
-  x.click();
+  // CsvStr = "data:application/csv," + encodeURIComponent(CsvStr);
+  // var x = document.createElement('a');
+  // x.setAttribute("href", CsvStr );
+  // x.setAttribute("download",`distanceTest1.csv`);
+  // document.body.appendChild(x);
+  // x.click();
 
 }
 

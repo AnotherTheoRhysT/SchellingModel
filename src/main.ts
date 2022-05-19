@@ -2,6 +2,7 @@ import { simRun, simTest, simReset, simReqId } from "./simRun.js";
 import { canvas, canvasHeight, canvasResize, canvasWidth, ctx, ctxStatus, fps } from "./config.js";
 import { simInit, popInit } from "./simInit.js";
 import { simStop } from "./simStop.js";
+import { downloadCsv } from "./simExport.js";
 
 
 if (!ctxStatus) {
@@ -26,6 +27,7 @@ document.getElementById('simStartBtn').onclick = () => {
   setTimeout(() => {
     simRun()
   }, 1000/fps)
+  // downloadCsv('test3.csv')
 }
 
 

@@ -1,5 +1,6 @@
 import { canvas, ctx, canvasHeight, canvasWidth, personColor } from "./config.js";
-import { countPop } from "./simRun.js";
+import { addCell, addRow } from "./simExport.js";
+import { countPop, initValues } from "./simRun.js";
 
 
 const popInit = <HTMLInputElement> document.getElementById("popInit"),
@@ -82,9 +83,15 @@ export const simInit = () => {
   console.log(`AlertLvl: ${alertLvlVal}; Beta: ${betaTransmission}`)
   day.value = String(0)
   dayVal = day.value
-  updateDay()
+  
+  addRow(`Initial Population:,${popInitVal},,Initial Infected:,${infectInitVal},,Alert Level:,${alertLvlVal},,Beta (Transmission Rate):,${betaTransmission},,Duration (in days):,${durationVal}\r\n`)
 
-  let healthyPop = popInitVal - infectInitVal
+  addRow("t,n_susceptible,n_exposed,n_infectious,n_symptomatic,n_severe,n_critical,n_recovered,n_dead,n_alive")
+  // addRow(`${dayVal},${popInitVal-infectInitVal},${infectInitVal},${0},${0},${0},${0},${0},${0},${popInitVal}`)
+
+  initValues()
+
+  // let healthyPop = popInitVal - infectInitVal
   areaVal = area.value
 
   // Grid Initialization
