@@ -1,5 +1,5 @@
 import { canvas, canvasHeight, canvasWidth, ctx, fps, personColor } from "./config.js";
-import { popInitVal, infectInitVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy, dayVal, updateDay, alertLvlVal, betaTransmission } from "./simInit.js";
+import { popInitVal, infectInitVal, areaVal, simGrid, updateGrid, emptyGridDeepCopy, dayVal, updateDay, alertLvlVal, betaTransmission, durationVal } from "./simInit.js";
 import { simStop } from "./simStop.js";
 
 
@@ -258,13 +258,14 @@ export const simRun = () => {
 
   updateCanvas(simGrid)
 
+
   // Update day counter
   updateDay()
 
-  timeOutId =  setTimeout(() => {
+  timeOutId = setTimeout(() => {
     simReqId = requestAnimationFrame(simRun)
     // Stop after
-    // if (++i > 10) cancelAnimationFrame(simReqId)
+    if (dayVal >= durationVal) cancelAnimationFrame(simReqId)
   }, 1000/fps)
 }
 

@@ -6,7 +6,9 @@ const popInit = <HTMLInputElement> document.getElementById("popInit"),
   infectInit = <HTMLInputElement> document.getElementById("infectInit"),
   // socDist = <HTMLInputElement> document.getElementById("socDist"),
   area = <HTMLInputElement> document.getElementById("area"),
-  day = <HTMLInputElement> document.getElementById("dayCounter")
+  day = <HTMLInputElement> document.getElementById("dayCounter"),
+  duration = <HTMLInputElement> document.getElementById("duration")
+  
 
 
 let popInitVal,
@@ -17,7 +19,8 @@ let popInitVal,
   alertLvl,
   alertLvlVal,
   dayVal,
-  betaTransmission
+  betaTransmission,
+  durationVal
 
 let simGrid = []
 let emptyGrid = []
@@ -44,6 +47,7 @@ const emptyGridInit = () => {
   }
 }
 
+
 export const emptyGridDeepCopy = () => {
   return JSON.parse(JSON.stringify(emptyGrid))
 }
@@ -52,8 +56,9 @@ export const emptyGridDeepCopy = () => {
 let testI = 0
 export const simInit = () => {
   alertLvl = <HTMLInputElement> document.querySelector("input[name=alertLvl]:checked")
+  durationVal = duration.value
   popInitVal = popInit.value
-  infectInitVal = infectInit.value;
+  infectInitVal = infectInit.value
   alertLvlVal = Number(alertLvl.value)
 
   // Beta transmission rate values based on np.linspace(0.010, 0.020, 5) in CovasimBenchmark.ipnyb
@@ -116,9 +121,11 @@ export const updateGrid = (newGrid) => {
   // console.log(`Updated Grid: ${countPop(simGrid)}`)
 }
 
+
 export const copyEmptyGrid = () => {
   JSON.parse
 }
+
 
 export const updateDay = () => {
   day.value = String(++dayVal)
@@ -133,5 +140,6 @@ export {
   simGrid,
   alertLvlVal,
   dayVal,
-  betaTransmission
+  betaTransmission,
+  durationVal
 }
