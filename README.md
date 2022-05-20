@@ -53,7 +53,7 @@ Working age population refers to population 15-64 years old
 
 Values of working age population (15-64 yrs old)
 
-
+ 
 
 [The Incubation Period of Coronavirus Disease 2019 (COVID-19) From Publicly Reported Confirmed Cases: Estimation and Application | Annals of Internal Medicine (acpjournals.org)](https://www.acpjournals.org/doi/10.7326/M20-0504)
 

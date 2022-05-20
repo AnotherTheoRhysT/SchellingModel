@@ -135,7 +135,7 @@ const infectPersons = () => {
             if (isInGrid(xCoord, 'x')) {
               for (let yOffset = -4; yOffset <= 4; yOffset++) {
                 let yCoord = y + yOffset
-                if (isInGrid(yCoord, 'y') && (moveGrid[xCoord][yCoord].status == 'susceptible' || moveGrid[xCoord][yCoord].status == 'recovered') && xCoord != x && yCoord != y) {
+                if (isInGrid(yCoord, 'y') && moveGrid[xCoord][yCoord].status == 'susceptible' && xCoord != x && yCoord != y) {
                   // distance formula
                   let dist = Math.sqrt((xOffset)**2 + (yOffset)**2)
                   switch (Math.round(dist)) {
@@ -153,7 +153,7 @@ const infectPersons = () => {
                       distProb = 0.2
                       break;
                   }
-                  infectProb = distProb * betaTransmission * 35;
+                  infectProb = distProb * betaTransmission * 7;
                   if (Math.random() <= infectProb) {
                     moveGrid[xCoord][yCoord].status = 'infected'
                     moveGrid[xCoord][yCoord].daysInfect = 1
@@ -234,6 +234,7 @@ const infectPersons = () => {
 const recoverPerson = (x,y) => {
   moveGrid[x][y].status = 'recovered'
   moveGrid[x][y].daysInfect = 0
+  moveGrid[x][y].severity = null
   n_recovered++
   n_infectious--
   n_symptomatic--
